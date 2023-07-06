@@ -1,7 +1,10 @@
+import {Heading, MainDiv} from './StyledComponent';
+import Header from './Header';
 const Home = () => {
   return (
-    <>
-      <h1>This is sample web application which displays details of Students</h1>
+    <MainDiv className=''>
+      <Header></Header>
+      <Heading>This is a sample web application which displays details of Students</Heading>
       <p>
         {" "}
         To get the Details of all Students press the "All Students" button in
@@ -17,7 +20,7 @@ const Home = () => {
         To Delete the information of specific student click on the "Delete
         Student" Button.
       </p>
-    </>
+    </MainDiv>
   );
 };
 

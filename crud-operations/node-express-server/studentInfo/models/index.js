@@ -37,6 +37,7 @@ db.sequelize = sequelize
 
 
 db.students = require('./students.model')(sequelize, DataTypes)
+db.User= require('../../usersInfo/user.model')(sequelize,DataTypes)
 
 db.sequelize.sync({force:false})
 .then(() => {

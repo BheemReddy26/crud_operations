@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
 
+
 const UpdateStudent = (props) => {
   const { details } = props;
   console.log(details,1)
@@ -23,7 +24,7 @@ const UpdateStudent = (props) => {
     standard,
     }))
 
-  },[details])
+  },[student_id,first_name, last_name, standard])
  
   const editHandler = () => {
     setEdit((prevState) => !prevState);
@@ -58,7 +59,7 @@ const UpdateStudent = (props) => {
 
     try {
       const response = await fetch(`http://localhost:8081/api/students/updateStudent/${student.id}`, options)
-       const data = await response.json
+       const data = await response.json();
        console.log(data)
       } 
       catch (error) {
@@ -74,21 +75,22 @@ const UpdateStudent = (props) => {
 
   return (
     <div>
+    
       <table className="table table-light">
         <thead className="thead-light">
-          <tr>
-            <th scope="col">Student Id</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Standard</th>
+          <tr style={{ border: "solid" }} >
+            <th style={{ borderRightWidth: "2px" }}>Student Id</th>
+            <th style={{ borderRightWidth: "2px" }}>First Name</th>
+            <th style={{ borderRightWidth: "2px" }}>Last Name</th>
+            <th style={{ borderRightWidth: "2px" }}>Standard</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>
+          <tr style={{ border: "solid" }}>
+            <td style={{ borderRightWidth: "2px" }}>
               <span>{student.id}</span>
             </td>
-            <td>
+            <td style={{ borderRightWidth: "2px" }}>
               {edit ? (
                 <input
                   type="text"
@@ -101,7 +103,7 @@ const UpdateStudent = (props) => {
                 <span>{student.firstName}</span>
               )}
             </td>
-            <td>
+            <td style={{ borderRightWidth: "2px" }}>
               {edit ? (
                 <input
                   type="text"

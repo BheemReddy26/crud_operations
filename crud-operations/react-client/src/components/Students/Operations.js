@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
-import UpdateStudent from "./updateStudentIndex";
+import UpdateStudent from "./UpdateStudent";
+import Header from "./Header";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
+import {LoginLabelField, LoginInputField,LoginFormStyle, DeleteFormContainer, DeleteContainer,ErrorMessageP, AddInputField,LoginButton} from './StyledComponent'
 
 export function GetOne() {
   const [id, setId] = useState("");
@@ -8,6 +10,15 @@ export function GetOne() {
   const [error, setError] = useState(false);
   const [errorValue, setErrorValue] = useState("");
   const [totalStudents, setTotalStudents] = useState(0);
+  const [totalData, setTotalData] = useState([])
+
+
+  const allIds = totalData.map(eachItem=> {
+    return eachItem.student_id
+  })
+ // console.log(allIds)
+  const check = allIds.filter(eachItem => eachItem===parseInt(id))
+  console.log(check);
 
   const fetchData = async () => {
     try {
@@ -26,6 +37,7 @@ export function GetOne() {
 
   const submitHandler = (event) => {
     event.preventDefault();
+    
     if (id > 0 && id <= totalStudents) {
       setError(false);
       fetchData();
@@ -45,13 +57,14 @@ export function GetOne() {
         );
         const data = await response.json();
         setTotalStudents(data.length);
+        setTotalData(data);
       } catch (error) {
         console.log(error);
       }
     };
     fetchData1();
     fetchData();
-  }, []);
+  });
   const inputHandler = (e) => {
     setId(e.target.value);
   };
@@ -61,33 +74,37 @@ export function GetOne() {
 
   return (
     <div className="d-flex bg-light flex-column">
-      <form className="d-flex flex-column" onSubmit={submitHandler}>
-        <label htmlFor="getStudent">Studnet Id</label>
-        <input
+      <Header />
+      <LoginFormStyle className="d-flex flex-column" onSubmit={submitHandler}>
+        <div className="d-flex flex-column" style={{width:'400px'}}>
+        <LoginLabelField htmlFor="getStudent">Studnet Id</LoginLabelField>
+        <LoginInputField
           placeholder="Place Student Id"
           id="getStudent"
           name="getStudent"
           type="number"
-          style={{ width: "130px" }}
+    
           onChange={inputHandler}
           value={id}
         />
-        <button
+        <LoginButton
           type="submit"
-          className="btn btn-primary"
-          style={{ width: "100px", fontSize: "12px" }}
+          className="w-50"
         >
           Get Details
-        </button>
-      </form>
+        </LoginButton>
+        {error && <ErrorMessageP >{errorValue}</ErrorMessageP>}
+
+        </div>
+      </LoginFormStyle>
 
       {data.length === 1 && !error && <UpdateStudent details={data} />}
-      {error && <p>{errorValue}</p>}
+     
     </div>
   );
 }
 
-export function PostStudent() {
+export function PostStudent(props ) {
   const [totalStudents, setTotalStudents] = useState(0);
   const [result, setResult] = useState();
   const [student, setStudent] = useState({
@@ -96,6 +113,8 @@ export function PostStudent() {
     last_name: "",
     standard: "",
   });
+
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -124,7 +143,8 @@ export function PostStudent() {
 
     const options = {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { 'x-auth-token':"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOjEsImlhdCI6MTY4ODU0MTM2M30.9Zd74i4ULkQB25iuGzZUMc2SZ2EOdq4pzL0LSXkcycc",
+        "Content-Type": "application/json" },
       body: JSON.stringify(bodyDetails),
     };
 
@@ -133,13 +153,24 @@ export function PostStudent() {
         `http://localhost:8081/api/students/addStudent`,
         options
       );
-      const data = await response.json;
-      console.log(data);
-      setResult("New Student added to database");
+
+     
+        const data = await response.json();
+        console.log(data);
+        setResult("New Student added to database");
+        //history.replace("/allStudents")
+
+      
     } catch (error) {
       console.log(error);
     }
   };
+
+  const handleKeyPress = (event) => {
+    if (event.key==="Enter") {
+      event.preventDefault()
+    }
+  }
 
   const inputHandler = (e) => {
     const { name, value } = e.target;
@@ -151,51 +182,49 @@ export function PostStudent() {
 
   return (
     <>
-      <form className="d-flex flex-column" onSubmit={saveHandler}>
-        <label htmlFor="first_name">First Name</label>
-        <input
+    <Header />
+      <LoginFormStyle  onSubmit={saveHandler}>
+        <LoginLabelField htmlFor="first_name">First Name</LoginLabelField>
+        <AddInputField 
           id="first_name"
-          className="w-25"
+          onKeyDown={handleKeyPress} 
           name="first_name"
           onChange={inputHandler}
           value={student.first_name}
         />
 
-        <label htmlFor="lastName">Last Name</label>
-        <input
+        <LoginLabelField htmlFor="lastName">Last Name</LoginLabelField>
+        <AddInputField
           type="text"
           name="last_name"
           id="lastName"
-          className="w-25"
+          onKeyDown={handleKeyPress} 
           value={student.last_name}
           onChange={inputHandler}
         />
-        <label htmlFor="number">Standard</label>
-        <input
+        <LoginLabelField htmlFor="number">Standard</LoginLabelField>
+        <AddInputField
           type="number"
           name="standard"
           id="number"
-          className="w-25"
+          onKeyDown={handleKeyPress} 
           value={student.standard}
           onChange={inputHandler}
         />
-     
-          <button
-            type="submit"
-            className="w-25 btn btn-success
-         mt-2"
-          >
-            Add
-          </button>
+      <Link to="/allStudents"><button onClick={saveHandler} className="btn btn-success">
+         Save
+        </button>
+        </Link>
 
-      </form>
+      </LoginFormStyle>
       {result && <p>{result}</p>}
     </>
   );
 }
 
 export function DeleteStudent() {
-  const [totalStudents, setTotalStudents] = useState(0);
+
+  const [totalData, setTotalData] = useState([])
 
   const [id, setId] = useState("");
   const [result, setResult] = useState([]);
@@ -207,7 +236,8 @@ export function DeleteStudent() {
           "http://localhost:8081/api/students/allStudents"
         );
         const data = await response.json();
-        setTotalStudents(data.length + 1);
+    
+        setTotalData(data)
       } catch (error) {
         console.log(error);
       }
@@ -215,14 +245,24 @@ export function DeleteStudent() {
     fetchData();
   }, []);
 
+  const allIds = totalData.map(eachItem=> {
+    return eachItem.student_id
+  })
+ // console.log(allIds)
+  const check = allIds.filter(eachItem => eachItem===parseInt(id))
+  console.log(check);
+
   const fetchData = async () => {
     try {
-      if (id > 0) {
+     
+      if (check.length>=1) {
         const response = await fetch(
           `http://localhost:8081/api/students/deleteStudent/${id}`,
           { method: "DELETE" }
         );
-        const data = await response.json();
+        const data = await response.json(); 
+        console.log(data)
+        
       }
     } catch (error) {
       console.log(error);
@@ -231,11 +271,11 @@ export function DeleteStudent() {
 
   const submitHandler = (event) => {
     event.preventDefault();
-    if (id > 0 && id < totalStudents) {
+    if (check.length>=1) {
       setResult("The details of the student are deleted from the database");
       fetchData();
     } else {
-      setResult("Something went Wrong");
+      setResult("The given Id didn't match any Student");
     }
 
     setId("");
@@ -243,7 +283,7 @@ export function DeleteStudent() {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  });
   const inputHandler = (e) => {
     setId(e.target.value);
   };
@@ -252,27 +292,31 @@ export function DeleteStudent() {
   //console.log(data.length);
 
   return (
-    <div className="d-flex bg-light flex-column">
-      <form className="d-flex flex-column" onSubmit={submitHandler}>
-        <label htmlFor="getStudent">Studnet Id</label>
-        <input
+    <DeleteContainer >
+      <Header />
+      <DeleteFormContainer onSubmit={submitHandler}>
+        <div className="d-flex flex-column" style={{width:"350px"}}>
+        <LoginLabelField htmlFor="getStudent">Studnet Id</LoginLabelField>
+        <LoginInputField
           placeholder="Place Student Id"
           id="getStudent"
           name="getStudent"
           type="number"
-          style={{ width: "130px" }}
+   
           onChange={inputHandler}
           value={id}
         />
         <button
           type="submit"
           className="btn btn-danger"
-          style={{ width: "100px", fontSize: "12px" }}
+          style={{ width: "100px", fontSize: "12px", marginTop:"20px" }}
         >
           Delete
         </button>
-      </form>
-      {result && <p>{result}</p>}
-    </div>
+        </div>
+      </DeleteFormContainer>
+      {result && <ErrorMessageP>{result}</ErrorMessageP>}
+ 
+    </DeleteContainer>
   );
 }

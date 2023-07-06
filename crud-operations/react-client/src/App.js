@@ -1,26 +1,34 @@
-import { Route, Switch } from "react-router-dom";
-import GetAll from "./components/getIndex";
+import { Route, Switch , Redirect} from "react-router-dom";
+import GetAll from "./components/Students/GetAll";
+import LoginForm from "./components/Students/LoginForm";
+import ProtectedRoute from "./components/Helpers/ProtectedRouter";
+import NotFound from "./components/UI/NotFound";
+
 
 import {
   GetOne,
   PostStudent,
   //UpdateStudent,
   DeleteStudent,
-} from "./components/operationIndex";
+} from "./components/Students/Operations";
 
-import Home from "./components/homeIndex";
-import Header from "./components/headerIndex";
+import Home from "./components/Students/Home";
+
 const App = () => {
   return (
     <> 
-    <Header />
+
      
       <Switch>
-        <Route exact path = "/" component = {Home} />
-        <Route exact path="/allStudents" component={GetAll} />
-        <Route exact path="/getStudent/:id" component={GetOne} />
-        <Route exact path="/postStudent/:id" component={PostStudent} />
-        <Route exact path="/deleteStudent/:id" component={DeleteStudent} />
+        <Route exact path="/login" component={LoginForm} />
+        <ProtectedRoute exact path = "/" component = {Home} />
+        <ProtectedRoute exact path="/allStudents" component={GetAll} />
+        <ProtectedRoute exact path="/getStudent/:id" component={GetOne} />
+        <ProtectedRoute exact path="/postStudent/:id" component={PostStudent} />
+        <ProtectedRoute exact path="/deleteStudent/:id" component={DeleteStudent} />
+        <Route path='/not-found' component={NotFound} />
+        <Redirect to ="not-found" />
+
       </Switch>
     </>
   );

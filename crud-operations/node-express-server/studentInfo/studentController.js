@@ -45,7 +45,7 @@ const getOneStudent = async (req,res) => {
         let student = await Student.findOne({attributes : {exclude: ['createdAt', 'updatedAt']},where : {student_id:id}})
         res.status(200).send(student)}
         catch {
-            res.status(400).send({"Error":"Something went Wrong"})
+            res.status(400).send(({Error:"Something went Wrong"}))
         }
 
 }
